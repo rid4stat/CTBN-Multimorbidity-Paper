@@ -8,7 +8,7 @@ title: >-
 type: software
 version: 1.0.0
 date-released: "2026-05-20"
-license: MIT
+license: GPL3
 repository-code: "https://github.com/InflAim/CTBN-Multimorbidity"
 url: "https://github.com/InflAim/CTBN-Multimorbidity"
 authors:
