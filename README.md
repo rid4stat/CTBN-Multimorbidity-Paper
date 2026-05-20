@@ -2,7 +2,7 @@
 
 **Continuous-Time Bayesian Networks with Structured Shrinkage Priors for Modelling Multimorbidity Trajectories in Large-Scale Electronic Health Records**
 
-[![License: GPL3](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/GPL3)
+[![License: GPL3](https://img.shields.io/badge/License-GPL3-yellow.svg)](https://opensource.org/licenses/GPL3)
 [![R](https://img.shields.io/badge/R-%E2%89%A54.2-blue.svg)](https://www.r-project.org/)
 [![Stan](https://img.shields.io/badge/Stan-%E2%89%A52.32-red.svg)](https://mc-stan.org/)
 [![Paper](https://img.shields.io/badge/Paper-Biometrics--style-green.svg)](paper/main.tex)
@@ -72,9 +72,11 @@ absorbing onset state. For each target condition *m*, the log onset
 intensity is
 
 ```
-$log q_m(t,u) = β⁰_m  +  Σ_{ℓ ∈ Pa(m)}   β¹_{m,{ℓ}}   X_ℓ(t⁻)
+log q_m(t,u) = β⁰_m  +  Σ_{ℓ ∈ Pa(m)}   β¹_{m,{ℓ}}   X_ℓ(t⁻)
                     +  Σ_{L⊆Pa(m), 2 ≤ |L| ≤ P}   β^|L|_{m,L} Π_{ℓ∈L} X_ℓ(t⁻)
-                    +  Z(t)ᵀ γ_m$,
+                    +  Z(t)ᵀ γ_m,
+
+$\log q_{m,i,s} = \beta^{0}_m + \sum_{j \in \mathrm{Pa}(m)} \beta^m_{\{j\}} X_{j,i,s} + \sum_{\substack{L \subseteq \mathrm{Pa}(m) \\ 2 \leq |L| \leq P}} \beta^m_L \prod_{j \in L} X_{j,i,s} + \mathbf{Z}_{i,s}^\top \boldsymbol{\gamma}_m$
 ```
 
 so that the network coefficients **β** capture main and higher-order
