@@ -63,7 +63,7 @@ The repository contains:
 * The **LaTeX source** of the paper and supplementary material
   (under `paper/`, copied verbatim from the OUP submission folder).
 
-## Methodology in one minute
+## Methodology at a glance
 
 For *M* binary chronic conditions evolving in continuous time, the joint
 process **X**(*t*) = (X<sub>1</sub>(t), …, X<sub>M</sub>(t)) is modelled as
