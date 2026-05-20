@@ -77,6 +77,16 @@ log q_m(t,u) = β⁰_m  +  Σ_{ℓ ∈ Pa(m)}   β¹_{m,{ℓ}}   X_ℓ(t⁻)
                     +  Z(t)ᵀ γ_m,
 
 $\log q_{m,i,s} = \beta^{0}_m + \sum_{j \in \mathrm{Pa}(m)} \beta^m_{\{j\}} X_{j,i,s} + \sum_{\substack{L \subseteq \mathrm{Pa}(m) \\ 2 \leq |L| \leq P}} \beta^m_L \prod_{j \in L} X_{j,i,s} + \mathbf{Z}_{i,s}^\top \boldsymbol{\gamma}_m$
+
+# Logistic Regression
+
+The sigmoid function is given by:
+
+$$
+\sigma(x) = \frac{1}{1 + e^{-x}}
+$$
+
+where $x \in \mathbb{R}$.
 ```
 
 so that the network coefficients **β** capture main and higher-order
