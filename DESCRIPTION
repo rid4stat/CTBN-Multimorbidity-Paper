@@ -1,0 +1,81 @@
+Package: CTBNMultimorbidity
+Type: Package
+Title: Continuous-Time Bayesian Networks with Structured Shrinkage Priors
+    for Multimorbidity Trajectories
+Version: 1.0.0
+Date: 2026-05-20
+Authors@R: c(
+    person(given = "Oyebayo Ridwan",
+           family = "Olaniran",
+           role = c("aut", "cre"),
+           email = "oyebayo.olaniran@lshtm.ac.uk",
+           comment = c(ORCID = "0000-0000-0000-0000")),
+    person(given = "Sayan Sankar",
+           family = "Paria",
+           role = "aut"),
+    person(given = "Mizanur",
+           family = "Khondoker",
+           role = "aut"),
+    person(given = "Alex",
+           family = "MacGregor",
+           role = "aut"),
+    person(given = "Alex",
+           family = "Lewin",
+           role = "aut"))
+Description: Implements continuous-time Bayesian networks (CTBNs) with four
+    order-dependent structured shrinkage priors (Hierarchical Structured,
+    Bayesian LASSO, Regularised Horseshoe, and Spike-and-Slab) for modelling
+    the joint trajectories of multiple long-term conditions in large-scale
+    electronic health records. The package provides both a fast L-BFGS-B
+    MAP + Laplace estimator and a full Stan / NUTS implementation, together
+    with utilities for posterior inclusion probabilities, conditional and
+    synergistic risk estimation, time-dependent AUC, and Brier scores.
+    Companion code for Olaniran et al. (2026).
+License: MIT + file LICENSE
+URL: https://github.com/InflAim/CTBN-Multimorbidity
+BugReports: https://github.com/InflAim/CTBN-Multimorbidity/issues
+Depends:
+    R (>= 4.2.0)
+Imports:
+    data.table (>= 1.14.0),
+    rstan (>= 2.32.0),
+    Rcpp (>= 1.0.10),
+    RcppParallel (>= 5.1.0),
+    foreach,
+    doParallel,
+    parallel,
+    R6,
+    jsonlite,
+    crayon,
+    pROC,
+    timeROC,
+    survival,
+    Matrix,
+    stats,
+    utils,
+    methods,
+    grDevices,
+    graphics
+Suggests:
+    ggplot2,
+    ggraph,
+    igraph,
+    patchwork,
+    scales,
+    viridisLite,
+    reshape2,
+    xtable,
+    stringr,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+LinkingTo:
+    Rcpp,
+    RcppParallel
+SystemRequirements: GNU make, C++17
+VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: true
+Language: en-GB
+RoxygenNote: 7.3.1
+Config/testthat/edition: 3

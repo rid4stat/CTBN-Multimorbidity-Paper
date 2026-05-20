@@ -1,0 +1,92 @@
+# =========================================================================
+# .gitignore for CTBN-Multimorbidity
+# =========================================================================
+
+# --- R ---------------------------------------------------------------------
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rcheck/
+*.Rproj
+.Rprofile
+*-Ex.R
+.httr-oauth
+
+# Package build artefacts
+/*.tar.gz
+/*.tgz
+/*.zip
+/src/*.o
+/src/*.so
+/src/*.dll
+/src/Makevars
+/src-x64/
+/src-i386/
+
+# Stan compilation cache
+*.rds.lock
+inst/stan/*.cpp
+inst/stan/*.o
+inst/stan/*.so
+inst/stan/*.dll
+*.stanc
+
+# pkgdown
+/docs/
+
+# roxygen
+/man/*.Rd.bak
+
+# --- Reproducibility outputs (regeneratable) ------------------------------
+results/
+sim_results/replicates/
+sim_results/progress/
+sim_results/logs/
+sim_results/*.rds
+sim_results/*.csv
+
+# Intermediate cached fits
+*.rds
+!inst/extdata/*.rds        # keep small bundled examples
+
+# --- UK Biobank data — MUST NOT be committed ------------------------------
+# Per UK Biobank Material Transfer Agreement
+data/
+data_raw/
+*.csv.gz
+*ukb*.csv
+*ukb*.tsv
+*ukb*.dta
+*ukb*.sav
+
+# --- LaTeX -----------------------------------------------------------------
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.out
+paper/*.synctex.gz
+paper/*.toc
+paper/*.lof
+paper/*.lot
+paper/*.nav
+paper/*.snm
+paper/*.vrb
+
+# --- macOS / Windows / editors --------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+.idea/
+
+# --- environment / secrets -------------------------------------------------
+.env
+.env.local
+.Renviron
+secrets/

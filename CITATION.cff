@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite both the article and the software
+  using the metadata below.
+title: >-
+  CTBN-Multimorbidity: Continuous-Time Bayesian Networks with Structured
+  Shrinkage Priors for Multimorbidity Trajectories
+type: software
+version: 1.0.0
+date-released: "2026-05-20"
+license: MIT
+repository-code: "https://github.com/InflAim/CTBN-Multimorbidity"
+url: "https://github.com/InflAim/CTBN-Multimorbidity"
+authors:
+  - given-names: Oyebayo Ridwan
+    family-names: Olaniran
+    affiliation: London School of Hygiene & Tropical Medicine
+    email: oyebayo.olaniran@lshtm.ac.uk
+  - given-names: Sayan Sankar
+    family-names: Paria
+    affiliation: London School of Hygiene & Tropical Medicine
+  - given-names: Mizanur
+    family-names: Khondoker
+    affiliation: University of East Anglia
+  - given-names: Alex
+    family-names: MacGregor
+    affiliation: University of East Anglia
+  - given-names: Alex
+    family-names: Lewin
+    affiliation: London School of Hygiene & Tropical Medicine
+keywords:
+  - multimorbidity
+  - continuous-time Bayesian networks
+  - shrinkage priors
+  - spike-and-slab
+  - electronic health records
+  - UK Biobank
+  - Stan
+  - R
+preferred-citation:
+  type: article
+  title: >-
+    Continuous-Time Bayesian Networks with Structured Shrinkage Priors
+    for Modelling Multimorbidity Trajectories in Large-Scale Electronic
+    Health Records
+  authors:
+    - given-names: Oyebayo Ridwan
+      family-names: Olaniran
+    - given-names: Sayan Sankar
+      family-names: Paria
+    - given-names: Mizanur
+      family-names: Khondoker
+    - given-names: Alex
+      family-names: MacGregor
+    - given-names: Alex
+      family-names: Lewin
+  year: 2026
+  journal: "Manuscript (under review)"
