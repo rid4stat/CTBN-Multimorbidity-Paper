@@ -1,0 +1,139 @@
+---
+title: "Getting Started with CTBN-Multimorbidity"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Getting Started with CTBN-Multimorbidity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>",
+  fig.width  = 6,
+  fig.height = 4
+)
+```
+
+# Overview
+
+This vignette walks through fitting a Continuous-Time Bayesian Network
+(CTBN) with order-dependent structured shrinkage priors to a small
+synthetic multimorbidity dataset. The methodology is described in full in
+the accompanying paper:
+
+> Olaniran et al. (2026). *Continuous-Time Bayesian Networks with
+> Structured Shrinkage Priors for Modelling Multimorbidity Trajectories
+> in Large-Scale Electronic Health Records.*
+
+We use the **fast MAP estimator** (`ctbn_map_fast()`) here because it
+runs in seconds on the small synthetic dataset; the full Stan path
+(`ctbn_fit()`) has an identical interface.
+
+# 1. Simulate a small CTBN trajectory
+
+```{r sim, eval = FALSE}
+# Source the library code (these are stand-alone files, not yet a package)
+source(file.path("..", "R", "ctbn_map_fast.R"))
+source(file.path("..", "scripts", "simulation", "01_map_simulation.R"))
+
+# Generate a small dataset (N = 1000 patients, T = 10 years)
+sim    <- generate_dataset(n = 1000, seed = 2026)
+DT_wide <- prepare_wide(sim)
+
+# Inspect
+str(DT_wide)
+```
+
+# 2. Fit the spike-and-slab CTBN
+
+```{r fit, eval = FALSE}
+fit <- ctbn_map_fast(
+  DT_wide,
+  max_order = 2L,           # P = 2 — main effects + pairwise interactions
+  prior     = "spike_slab", # recommended prior
+  theta     = 1.0,          # order penalty
+  pi0       = 0.10,         # base inclusion probability
+  verbose   = TRUE
+)
+```
+
+The returned object is a list with one slot per target condition, each
+containing:
+
+* `beta_hat`, `gamma_hat`, `beta0_hat` — posterior MAP estimates
+* `se_beta`, `se_gamma`             — Laplace standard errors
+* `pip_hat`                          — exact PIPs (spike-and-slab) or
+                                       pseudo-PIPs (continuous priors)
+* `loglik`, `aic`, `bic`            — diagnostics
+
+# 3. Extract the inferred network
+
+```{r summary, eval = FALSE}
+# Print a network summary at PIP threshold 0.5
+summary(fit, pip_threshold = 0.5)
+
+# Edges with PIP >= 0.95 (paper-style "highly supported")
+edges <- compute_selection_stats(
+  beta_hat = fit$IHD$beta_hat,
+  se_beta  = fit$IHD$se_beta,
+  x_orders = fit$IHD$x_orders,
+  prior    = "spike_slab",
+  pip_threshold = 0.95
+)
+edges[edges$active, ]
+```
+
+# 4. Compute the 5-year cumulative incidence function
+
+```{r ci, eval = FALSE}
+# Reference patient with all parent conditions absent
+ref_patient <- DT_wide[1, ]
+ref_patient[, names(DT_wide)[grep("^X_", names(DT_wide))] := 0L]
+
+F_m <- compute_F_m(
+  fit         = fit,
+  target      = "IHD",
+  patient_dt  = ref_patient,
+  tau         = 5,                  # 5-year horizon
+  zbar        = NULL                # population-average covariate vector
+)
+F_m
+```
+
+# 5. Cross-validated predictive performance
+
+For a 5-fold patient-level cross-validation across all four priors,
+P ∈ {1, 2} and θ ∈ {0.5, 1, 2}:
+
+```{r cv, eval = FALSE}
+folds <- make_patient_folds(DT_wide, k = 5, seed = 42)
+
+cv_results <- ctbn_cv_compare(
+  DT_wide      = DT_wide,
+  folds        = folds,
+  priors       = c("spike_slab", "structured", "lasso", "horseshoe"),
+  p_grid       = c(1L, 2L),
+  theta_grid   = c(0.5, 1.0, 2.0),
+  eval_times   = c(1, 2, 5, 7, 10),
+  parallel     = TRUE,
+  use_map_fast = TRUE                # set to FALSE for full Stan path
+)
+
+summarise_cv(cv_results)
+plot_tdauc(cv_results)
+```
+
+# 6. What's next?
+
+* For the full UK Biobank analysis pipeline, see
+  `scripts/ukb_analysis/04_stan_results.R` — the script that produced
+  the figures and tables of the paper.
+* For the simulation study reported in the paper, see
+  `scripts/simulation/03_stan_simulation.R`.
+* All output figures and tables are kept under `paper/figures/`,
+  `paper/tables/`, and `paper/sim_results/`.

@@ -1,0 +1,465 @@
+%% ============================================================
+%% Supplementary Material for:
+%% Continuous-Time Bayesian Networks with Structured Shrinkage
+%% Priors for Modelling Multimorbidity Trajectories in
+%% Large-Scale Electronic Health Records
+%% ============================================================
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage{natbib}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage{listings}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thesubsection}{S\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{S\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{\textbf{Supplementary Material:\\
+Continuous-Time Bayesian Networks with Structured Shrinkage
+Priors for Modelling Multimorbidity Trajectories in Large-Scale
+Electronic Health Records}}
+
+\author[1]{O.~R.~Olaniran}
+\author[1]{S.~S.~Paria}
+\author[2]{M.~Khondoker}
+\author[2]{A.~MacGregor}
+\author[1]{A.~Lewin}
+\affil[1]{Department of Medical Statistics, London School of Hygiene \&
+Tropical Medicine, London, UK}
+\affil[2]{University of East Anglia, Norwich, UK}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\tableofcontents
+
+\clearpage
+
+%% ============================================================
+\section{Detailed Specification of the Four Shrinkage Priors}
+\label{sec:supp_priors}
+%% ============================================================
+
+This section gives the full hierarchical specification, marginal density, and
+closed-form full conditionals for each of the four shrinkage priors compared
+in the main text. Throughout, $\beta_j$ denotes a coefficient with associated
+interaction order $p_j \in \{1, \dots, P\}$ (with $p_j = 1$ for main effects
+and $p_j = r$ for an $r$-way interaction), $\theta > 0$ is the order-penalty
+hyperparameter, and $\boldsymbol{\gamma}_m$ denotes the covariate coefficients
+which are not subject to order-based penalisation. We write $n_p = |\{j : p_j = p\}|$
+for the number of coefficients of order $p$, and $n_m$ for the effective sample
+size for condition $m$ (number of at-risk intervals).
+
+\subsection{Hierarchical Structured (HS) Prior}
+
+The hierarchical structured prior places an order-specific inverse-gamma
+hyperprior on the slab variance.
+
+\subsubsection{Hierarchy}
+\begin{align}
+\beta_j \mid \sigma^2_{p_j} &\sim \mathcal{N}\!\left(0,\; \sigma^2_{p_j}\, e^{-\theta p_j}\right), \qquad j = 1, \dots, J,\\
+\sigma^2_p &\sim \frac{1}{\Gamma(p+1)}\,\mathrm{Inv\text{-}Gamma}(a_0, b_0), \qquad p = 0, 1, \dots, P,\\
+\gamma_k \mid \sigma^2_\gamma &\sim \mathcal{N}(0, \sigma^2_\gamma), \qquad k = 1, \dots, K,\\
+\sigma^2_\gamma &\sim \mathrm{Inv\text{-}Gamma}(a_0, b_0).
+\end{align}
+The factorial scaling $\Gamma(p+1)^{-1}$ on the hyperprior reflects the
+combinatorially increasing number of potential $p$-way interactions and
+imposes additional penalisation at higher orders beyond the exponential decay
+$e^{-\theta p_j}$. Together these two mechanisms ensure that main effects are
+only mildly regularised while higher-order interactions are strongly shrunk
+towards zero. The hyperparameters are typically set to $a_0 = b_0 = 0.001$ to
+concentrate the hyperprior mass near zero.
+
+\subsubsection{Marginal density}
+Marginalising over $\sigma^2_{p_j}$ yields a scaled Student-$t$ marginal:
+\begin{equation}
+p(\beta_j) = \frac{\Gamma(a_0 + \tfrac{1}{2})}{\Gamma(a_0)\sqrt{2\pi b_0\,\Gamma(p_j+1)\,e^{\theta p_j}}} \left(1 + \frac{\beta_j^2}{2b_0\,\Gamma(p_j+1)\,e^{\theta p_j}}\right)^{-(a_0+\frac{1}{2})},
+\end{equation}
+a $t_{2a_0}$ distribution with scale that shrinks with interaction order. The
+heavy-tailed marginal allows individual coefficients to escape shrinkage when
+strongly supported by data.
+
+\subsubsection{Full conditionals}
+\begin{align}
+\sigma^2_p \mid \boldsymbol{\beta} &\sim \mathrm{Inv\text{-}Gamma}\!\left(a_0 + \frac{n_p}{2},\;\; b_0 + \frac{e^{\theta p}}{2} \sum_{j:\,p_j=p} \beta_j^2\right),\\
+\sigma^2_\gamma \mid \boldsymbol{\gamma} &\sim \mathrm{Inv\text{-}Gamma}\!\left(a_0 + \frac{K}{2},\;\; b_0 + \frac{1}{2}\sum_{k=1}^K \gamma_k^2\right).
+\end{align}
+The full conditional for $\beta_j$ is non-conjugate due to the Poisson
+likelihood and is sampled by NUTS.
+
+\subsection{Bayesian LASSO}
+
+The Bayesian LASSO \citep{ParkCasella2008} induces $L_1$-type regularisation
+through a scale mixture of normals representation.
+
+\subsubsection{Hierarchy}
+\begin{align}
+\beta_j \mid \tau^2_j &\sim \mathcal{N}\!\left(0,\; \tau^2_j\, e^{-\theta p_j}\right), \qquad j = 1, \dots, J,\\
+\tau^2_j \mid \lambda^2_{p_j} &\sim \mathrm{Exp}\!\left(\frac{\lambda^2_{p_j}}{2}\right),\\
+\lambda^2_p &\sim \mathrm{Inv\text{-}Gamma}(a_0, b_0), \qquad p = 0, 1, \dots, P,\\
+\gamma_k \mid \lambda^2_\gamma &\sim \mathrm{Laplace}(0, \sqrt{\lambda^2_\gamma}),\qquad k = 1, \dots, K,\\
+\lambda^2_\gamma &\sim \mathrm{Inv\text{-}Gamma}(a_0, b_0).
+\end{align}
+The per-order penalty $\lambda^2_p$ controls the overall degree of shrinkage
+for coefficients of order $p$.
+
+\subsubsection{Marginal density}
+Marginalising over $\tau^2_j$ yields the double-exponential (Laplace) marginal:
+\begin{equation}
+p(\beta_j \mid \lambda_{p_j}) = \frac{\lambda_{p_j}\, e^{\theta p_j/2}}{2} \exp\!\left(-\lambda_{p_j}\, e^{\theta p_j/2}\, |\beta_j|\right),
+\end{equation}
+so the effective Laplace scale shrinks exponentially with order.
+
+\subsubsection{Full conditionals}
+\begin{align}
+\tau^{-2}_j \mid \beta_j, \lambda_{p_j} &\sim \mathrm{Inv\text{-}Gaussian}\!\left(\frac{\lambda_{p_j}\, e^{\theta p_j/2}}{|\beta_j|},\;\; \lambda^2_{p_j}\, e^{\theta p_j}\right),\\
+\lambda^2_p \mid \{\tau^2_j : p_j = p\} &\sim \mathrm{Inv\text{-}Gamma}\!\left(a_0 + n_p,\;\; b_0 + \frac{1}{2}\sum_{j:\,p_j=p} \tau^2_j\right),\\
+\lambda^2_\gamma \mid \boldsymbol{\gamma} &\sim \mathrm{Inv\text{-}Gamma}\!\left(a_0 + K,\;\; b_0 + \frac{1}{2}\sum_{k=1}^K \gamma_k^2\right).
+\end{align}
+The shrinkage factor used for the pseudo-PIP construction (Section~3.3 of the
+main text) is $\kappa_j = (1 + 2\lambda^2_{p_j}\, e^{-\theta p_j})^{-1}$.
+
+\subsection{Regularised Horseshoe}
+
+The regularised horseshoe \citep{PiironenVehtari2017} employs a global--local
+shrinkage structure with a slab component that caps the local scale.
+
+\subsubsection{Hierarchy}
+\begin{align}
+\beta_j &= z_j\, \tilde{\lambda}_j\, \tau_j, \qquad z_j \sim \mathcal{N}(0, 1),\\
+\tilde{\lambda}^2_j &= \frac{c^2 \lambda^2_j}{c^2 + \tau^2_j \lambda^2_j},\\
+\tau_j &= \tau_0\, e^{-\theta p_j},\\
+\lambda_j &\sim \mathrm{Cauchy}^+(0, 1),\\
+\tau_0 &\sim \mathrm{Cauchy}^+(0, \tau_{\mathrm{scale}}),\\
+c^2 &\sim \mathrm{Inv\text{-}Gamma}\!\left(\frac{\nu_{\mathrm{slab}}}{2},\; \frac{\nu_{\mathrm{slab}}\, s^2_{\mathrm{slab}}}{2}\right),\\
+\gamma_k &\sim \mathcal{N}(0, 1).
+\end{align}
+The non-centred parameterisation $\beta_j = z_j \tilde{\lambda}_j \tau_j$
+improves HMC geometry when $\tau_j$ is small. The slab variance $c^2$ caps the
+effective local scale at $\sqrt{c^2}$. Defaults are $\nu_{\mathrm{slab}} = 4$,
+$s_{\mathrm{slab}} = 2$, and $\tau_{\mathrm{scale}} = p_0 / J \cdot n_m^{-1/2}$
+where $p_0$ is a prior guess at the number of non-zero coefficients.
+
+\subsubsection{Auxiliary representation and full conditionals}
+The half-Cauchy distributions on $\lambda_j$ and $\tau_0$ admit an inverse-gamma
+scale-mixture representation. Introducing auxiliary variables $\nu_j > 0$ and
+$\xi > 0$:
+\begin{align}
+\lambda^2_j \mid \nu_j &\sim \mathrm{Inv\text{-}Gamma}\!\left(\tfrac{1}{2},\; \tfrac{1}{\nu_j}\right), \quad \nu_j \sim \mathrm{Inv\text{-}Gamma}\!\left(\tfrac{1}{2},\; 1\right),\\
+\tau^2_0 \mid \xi &\sim \mathrm{Inv\text{-}Gamma}\!\left(\tfrac{1}{2},\; \tfrac{1}{\xi}\right), \quad \xi \sim \mathrm{Inv\text{-}Gamma}\!\left(\tfrac{1}{2},\; 1\right).
+\end{align}
+The closed-form full conditionals for the auxiliary variables are
+\begin{align}
+\lambda^{-2}_j \mid \beta_j, \tau_j, \nu_j &\sim \mathrm{Inv\text{-}Gamma}\!\left(1,\;\; \frac{1}{\nu_j} + \frac{\beta_j^2}{2\tau^2_j}\right),\\
+\nu^{-1}_j \mid \lambda_j &\sim \mathrm{Inv\text{-}Gamma}\!\left(1,\;\; 1 + \frac{1}{\lambda^2_j}\right),\\
+\tau^{-2}_0 \mid \{\beta_j\}, \{\lambda_j\}, \xi &\sim \mathrm{Inv\text{-}Gamma}\!\left(\frac{J+1}{2},\;\; \frac{1}{\xi} + \frac{1}{2}\sum_{j=1}^J \frac{\beta_j^2}{\lambda^2_j\, e^{-2\theta p_j}}\right),\\
+\xi^{-1} \mid \tau_0 &\sim \mathrm{Inv\text{-}Gamma}\!\left(1,\;\; 1 + \frac{1}{\tau^2_0}\right).
+\end{align}
+The posterior shrinkage factor for the pseudo-PIP construction is
+$\kappa_j = (1 + n_m\, \tau^2_j\, \tilde{\lambda}^2_j)^{-1}$.
+
+\subsection{Continuous Spike-and-Slab}
+
+The spike-and-slab prior performs explicit probabilistic variable selection
+by mixing a diffuse slab with a concentrated spike. We use a continuous
+relaxation to enable HMC sampling.
+
+\subsubsection{Hierarchy}
+For the interaction and main-effect coefficients:
+\begin{align}
+\beta_j \mid w_j, \sigma^2_{p_j} &\sim \mathcal{N}\!\left(0,\; w_j \sigma^2_{p_j} + (1-w_j)\epsilon\right), \qquad j = 1, \dots, J,\\
+w_j \mid \pi_{p_j} &\sim \mathrm{Beta}\!\left(1,\; \frac{1}{\pi_{p_j}} - 1\right),\\
+\pi_p &= \pi_0\, e^{-\theta p}, \qquad \pi_0 \in (0,1),\\
+\sigma^2_p &\sim \mathrm{Inv\text{-}Gamma}(a_0, b_0), \qquad p = 0, 1, \dots, P.
+\end{align}
+The spike variance is set to $\epsilon = 10^{-4}$ so that $\epsilon \ll \sigma^2_{p_j}$
+and the continuous relaxation closely approximates the discrete spike-and-slab.
+The Beta prior on $w_j$ ensures $\mathbb{E}[w_j] = \pi_{p_j}$.
+
+For the covariate coefficients, an analogous structure with a fixed inclusion
+probability $\pi_0$ is specified:
+\begin{align}
+\gamma_k \mid v_k, \sigma^2_\gamma &\sim \mathcal{N}\!\left(0,\; v_k \sigma^2_\gamma + (1-v_k)\epsilon\right), \qquad k = 1, \dots, K,\\
+v_k \mid \pi_0 &\sim \mathrm{Beta}\!\left(1,\; \frac{1}{\pi_0} - 1\right),\\
+\sigma^2_\gamma &\sim \mathrm{Inv\text{-}Gamma}(a_0, b_0).
+\end{align}
+
+\subsubsection{Marginal density}
+Integrating over $w_j$ and $v_k$ yields marginal mixture distributions:
+\begin{align}
+p(\beta_j) &= \pi_{p_j}\,\mathcal{N}(\beta_j \mid 0, \sigma^2_{p_j}) + (1-\pi_{p_j})\,\mathcal{N}(\beta_j \mid 0, \epsilon),\\
+p(\gamma_k) &= \pi_0\,\mathcal{N}(\gamma_k \mid 0, \sigma^2_\gamma) + (1-\pi_0)\,\mathcal{N}(\gamma_k \mid 0, \epsilon).
+\end{align}
+
+\subsubsection{Posterior inclusion probability (PIP)}
+The PIP for $\beta_j$ is recovered analytically at each MCMC draw via Bayes'
+theorem:
+\begin{equation}\label{eq:supp_pip}
+\mathrm{PIP}_j = \frac{\pi_{p_j}\,\phi(\beta_j;\, 0, \sigma^2_{p_j})}{\pi_{p_j}\,\phi(\beta_j;\, 0, \sigma^2_{p_j}) + (1-\pi_{p_j})\,\phi(\beta_j;\, 0, \epsilon)},
+\end{equation}
+where $\phi(\cdot;\, 0, v)$ denotes the $\mathcal{N}(0, v)$ density. The
+posterior mean PIP, $\widehat{\mathrm{PIP}}_j = \mathbb{E}[\mathrm{PIP}_j \mid \mathcal{D}]$,
+is computed by averaging Equation~\eqref{eq:supp_pip} over MCMC draws. A
+directed edge is declared active if $\widehat{\mathrm{PIP}}_j \geq 0.5$.
+
+\subsubsection{Full conditionals}
+\begin{align}
+\sigma^2_p \mid \boldsymbol{\beta}, \mathbf{w} &\sim \mathrm{Inv\text{-}Gamma}\!\left(a_0 + \frac{n_p}{2},\;\; b_0 + \frac{1}{2}\sum_{j:\,p_j=p} \frac{w_j \beta_j^2}{w_j \sigma^2_p + (1-w_j)\epsilon}\right),\\
+\sigma^2_\gamma \mid \boldsymbol{\gamma}, \mathbf{v} &\sim \mathrm{Inv\text{-}Gamma}\!\left(a_0 + \frac{K}{2},\;\; b_0 + \frac{1}{2}\sum_{k=1}^K \frac{v_k \gamma_k^2}{v_k \sigma^2_\gamma + (1-v_k)\epsilon}\right).
+\end{align}
+The full conditionals for $w_j$ and $v_k$ are Beta distributions updated by
+the relative likelihoods of $\beta_j$ and $\gamma_k$ under the spike and slab
+components. The full conditional for $\beta_j$ is sampled by NUTS.
+
+\subsection{Common Laplace-Approximation Form of the Full Conditional for $\beta_j$}
+
+Across all four priors the Poisson likelihood enters non-conjugately. A
+Laplace approximation around the current iterate yields the same approximate
+Gaussian form for the full conditional of $\beta_j$:
+\begin{equation}
+\log p(\beta_j \mid \mathrm{rest}) \approx -\frac{(\beta_j - \mu_j)^2}{2\sigma^2_j} + \mathrm{const},
+\end{equation}
+with
+\begin{equation}
+\sigma^2_j = \left(\frac{1}{v_j} + \sum_{i,s} x^2_{j,i,s}\, T_{i,s}\, e^{\eta_{i,s}}\right)^{-1}, \qquad
+\mu_j = \sigma^2_j \sum_{i,s} x_{j,i,s}\!\left(N^m_{i,s} - T_{i,s}\, e^{\eta^{(-j)}_{i,s}}\right),
+\end{equation}
+where $\eta^{(-j)}_{i,s}$ is the linear predictor excluding the contribution of
+$\beta_j$, and the effective prior variance $v_j$ differs by prior:
+\[
+v_j = \begin{cases}
+\sigma^2_{p_j}\, e^{-\theta p_j} & \text{(hierarchical structured and spike-and-slab)}, \\
+\tau^2_j\, e^{-\theta p_j} & \text{(Bayesian LASSO)}, \\
+\tilde{\lambda}^2_j\, \tau^2_j & \text{(regularised horseshoe)}.
+\end{cases}
+\]
+This common form makes clear that the four priors differ only in how $v_j$
+is determined from auxiliary scale parameters. Exact posterior sampling is
+performed via NUTS in Stan.
+
+%% ============================================================
+\section{Stan Code for All Four Shrinkage Priors}
+\label{sec:supp_stan}
+%% ============================================================
+
+The following R/Stan code implements the four shrinkage priors via the
+\texttt{rstan} package. Full reproducible code, including the data-preprocessing
+pipeline and the post-processing scripts that compute pseudo-PIPs, PIPs, and
+evaluation metrics, is available at
+\url{https://github.com/InflAim/CTBN-Multimorbidity}.
+
+\begin{footnotesize}
+\begin{verbatim}
+# =============================================================================
+# CTBN BAYESIAN POSTERIOR ESTIMATION  (rstan)
+# Supports four prior specifications: spike_slab, structured, lasso, horseshoe
+# =============================================================================
+
+# ---- 1. Spike-and-Slab (marginalised normal mixture) ------------------------
+.STAN_SPIKE_SLAB <- "
+data {
+  int<lower=1> N_rows;  int<lower=1> Q;  int<lower=1> P;
+  array[N_rows] int<lower=0> N_obs;
+  matrix[N_rows, Q] X;  matrix[N_rows, P] Z;
+  vector<lower=0>[N_rows] T;
+  array[Q] int<lower=0> beta_order;
+  real<lower=0> theta;  real<lower=0> v0;  real<lower=0> v1;
+  real<lower=0,upper=1> pi_inc;  int<lower=1> max_order;
+}
+parameters { vector[Q] beta;  vector[P] gamma;  real<lower=0> sigma2; }
+model {
+  sigma2 ~ inv_gamma(1, 1);
+  for (j in 1:Q)
+    target += log_sum_exp(
+      log1m(pi_inc) + normal_lpdf(beta[j] | 0, sqrt(v0 * sigma2)),
+      log(pi_inc)   + normal_lpdf(beta[j] | 0,
+                        sqrt(v1 * sigma2 * exp(-theta * beta_order[j]))));
+  gamma ~ normal(0, 1);
+  target += poisson_log_lpmf(N_obs | X * beta + Z * gamma + log(T));
+}
+"
+
+# ---- 2. Hierarchical Structured ---------------------------------------------
+.STAN_STRUCTURED <- "
+parameters {
+  vector[Q] beta;  vector[P] gamma;
+  vector<lower=0>[max_order+1] sigma2;  real<lower=0> sigma2_gamma;
+}
+model {
+  sigma2 ~ inv_gamma(0.001, 0.001);
+  for (j in 1:Q)
+    beta[j] ~ normal(0, sqrt(sigma2[beta_order[j]+1]
+                             * exp(-theta * beta_order[j])));
+  gamma ~ normal(0, sqrt(sigma2_gamma));
+  target += poisson_log_lpmf(N_obs | X * beta + Z * gamma + log(T));
+}
+"
+
+# ---- 3. Bayesian LASSO -------------------------------------------------------
+.STAN_LASSO <- "
+parameters {
+  vector[Q] beta;  vector[P] gamma;
+  vector<lower=0>[max_order+1] lambda2;  real<lower=0> lambda2_gamma;
+}
+model {
+  lambda2 ~ inv_gamma(0.001, 0.001);
+  for (j in 1:Q)
+    beta[j] ~ double_exponential(0,
+                sqrt(lambda2[beta_order[j]+1] * exp(-theta * beta_order[j])));
+  gamma ~ double_exponential(0, sqrt(lambda2_gamma));
+  target += poisson_log_lpmf(N_obs | X * beta + Z * gamma + log(T));
+}
+"
+
+# ---- 4. Regularised Horseshoe (Piironen & Vehtari 2017) ---------------------
+.STAN_HORSESHOE <- "
+parameters {
+  vector[Q] z_beta;  vector[P] gamma;
+  vector<lower=0>[Q] lambda;  real<lower=0> tau;  real<lower=0> c2;
+}
+transformed parameters {
+  vector[Q] beta;
+  for (j in 1:Q) {
+    real tau_j     = tau * exp(-theta * beta_order[j]);
+    real l2        = square(lambda[j]);
+    real lt        = c2 * l2 / (c2 + square(tau_j) * l2);
+    beta[j]        = z_beta[j] * sqrt(lt) * tau_j;
+  }
+}
+model {
+  tau    ~ cauchy(0, tau0);
+  c2     ~ inv_gamma(0.5 * slab_df, 0.5 * slab_df * square(slab_scale));
+  lambda ~ cauchy(0, 1);
+  z_beta ~ std_normal();
+  gamma  ~ normal(0, 1);
+  target += poisson_log_lpmf(N_obs | X * beta + Z * gamma + log(T));
+}
+"
+\end{verbatim}
+\end{footnotesize}
+
+%% ============================================================
+\section{Detailed Prior Ranking Discussion}
+\label{sec:supp_ranking}
+%% ============================================================
+
+This section gives the detailed per-prior commentary supporting the consolidated
+ranking summary in the main text (Figure~6 of the main paper).
+
+\paragraph{Spike-and-slab.}
+The spike-and-slab ranks first across all three analysis models on RMSE,
+coverage distance from $0.95$, FPR, and Poisson log-likelihood, demonstrating
+consistent superiority on parameter recovery, calibration, false-discovery
+control, and predictive accuracy simultaneously. Its sole and persistent
+weakness is TPR, on which it ranks last (4th) across all analysis models,
+reflecting the conservative nature of its hard-thresholding selection
+mechanism. Brier score ranking is 4th under A1, improving to 3rd under A2 and
+2nd under A3. Selection AUC ranks 3rd under A1 and A2, improving to 2nd under
+A3. Overall, the spike-and-slab presents the most balanced profile across
+estimation and selection metrics, with the trade-off of reduced sensitivity.
+
+\paragraph{Hierarchical Structured.}
+The structured normal ranks 2nd on RMSE across all analysis models, and
+achieves 1st on selection AUC under A2, indicating competitive PIP ranking
+ability under correct specification. However, it ranks poorly on coverage
+distance (2.5th under A1, 3rd under A2 and A3) and last on Brier score under
+A2 and A3 (4th), suggesting that while it recovers point estimates reasonably
+well, its uncertainty quantification and predictive calibration are weaker
+than the spike-and-slab. FPR ranks 3rd consistently, indicating moderate
+false-discovery control. The structured normal is thus a reasonable choice
+when point estimation is the priority but is not recommended when calibrated
+uncertainty or predictive performance is critical.
+
+\paragraph{Bayesian LASSO.}
+The Bayesian LASSO ranks last (4th) on RMSE across all analysis models and
+last on FPR, confirming poor parameter recovery and the weakest
+false-discovery control of all priors. Its ranks on TPR (2nd across all
+analysis models) and selection AUC (1st under A1 and A2, 3rd under A3) reflect
+its tendency to include most parameters, inflating both true and false
+positives simultaneously. Brier score is 1st under A1 and A2, suggesting
+competitive short-term predictive accuracy despite poor estimation, though
+this advantage disappears under A3 where its Brier rank falls to 3rd. The
+Bayesian LASSO is not recommended when parameter interpretability or network
+sparsity is required.
+
+\paragraph{Regularised horseshoe.}
+The regularised horseshoe ranks worst (4th) on coverage distance and selection
+AUC across all analysis models, consistent with its near-random pseudo-PIP
+discrimination documented in the main-text selection figures. It ranks 2nd
+on TPR across all analysis models, but as established earlier this reflects
+indiscriminate inclusion rather than genuine sensitivity. A notable exception
+is under A3, where the regularised horseshoe ranks 1st on coverage distance
+and 1st on Brier score, suggesting that its global shrinkage mechanism
+confers some advantage in uncertainty quantification and prediction when the
+analysis model is over-specified, though this does not compensate for its
+poor selection behaviour.
+
+\paragraph{Overall recommendation.}
+No single prior dominates uniformly across all seven metrics. However, the
+spike-and-slab presents the most coherent profile for the goals of network
+structure learning: it ranks first on RMSE, FPR, coverage calibration, and
+Poisson log-likelihood across all or most analysis models, at the cost of
+reduced sensitivity (TPR rank 4). The structured normal is a viable secondary
+choice when computational considerations favour a continuous prior, provided
+the analysis does not require hard variable selection. The Bayesian LASSO and
+regularised horseshoe are not recommended for this application given their
+systematic failure on FPR and selection AUC respectively.
+
+%% ============================================================
+\section{Additional Predictive Performance Details}
+\label{sec:supp_pred}
+%% ============================================================
+
+The under-specified analysis model A1 produces the largest predictive
+degradation: under A1, all priors yield Poisson log-likelihood of $-0.5746$
+and Brier scores of $0.1581$--$0.1582$, modestly worse than A2, reflecting the
+omission of true interaction terms from the linear predictor. Notably, under
+the over-specified analysis model A3, predictive performance is marginally
+better than or equivalent to A2 for most priors, with the spike-and-slab
+achieving the best Poisson log-likelihood ($-0.5721$) and joint-best Brier
+score ($0.1572$) across all analysis-model/prior combinations. The Bayesian
+LASSO is the sole exception, showing a deterioration under A3 relative to A2
+(Poisson LL $-0.5744$ vs.\ $-0.5731$), consistent with its tendency to
+over-shrink or over-fit under an expanded parameter space.
+
+The oracle efficiency analysis (Figure~A1 in the main appendix) confirms
+that, across all three analysis models, the Brier-ratio distributions for all
+four priors are tightly concentrated at or just above $1.0$ for most
+conditions, indicating that the fitted models approach oracle-level predictive
+efficiency regardless of prior choice or model specification. Conditions with
+greater baseline incidence heterogeneity across replicates (notably DM, DVL,
+HL, and OA) exhibit slightly wider Brier-ratio distributions, reflecting
+greater Monte Carlo variability in the oracle benchmark rather than genuine
+inefficiency of the fitted models. Under A3, the distributions remain tightly
+clustered near $1.0$ for the spike-and-slab, structured normal, and
+regularised horseshoe, while the Bayesian LASSO shows a marginally wider
+spread in several conditions (e.g.\ DE, DVL). No prior exhibits systematic
+left-tail mass below $0.9$ in any condition or analysis model, confirming
+that none of the fitted models suffer from meaningful predictive inefficiency
+relative to the oracle.
+
+%% ============================================================
+\bibliographystyle{apalike}
+\bibliography{reference}
+%% ============================================================
+
+\end{document}
