@@ -321,7 +321,12 @@ School of Hygiene & Tropical Medicine).
 
 This work was conducted under the **InflAim** programme and used the UK
 Biobank Resource (application 303849). We thank the UK Biobank participants
-and the participating NHS GPs whose data made this work possible.
+and the participating NHS GPs whose data made this work possible. This programme
+is funded by the NIHR [Programme Development Grant (NIHR205461)]. The views expressed
+are those of the authors and not necessarily those of the NIHR or the Department of Health
+and Social Care. We thank the PPIE group members for their invaluable contributions to this
+research and to the clinical experts. We acknowledge the whole InflAIM team for their support
+and advice.
 
 ## Licence
 
