@@ -264,7 +264,7 @@ latexmk -pdf supplementary.tex
 
 The UK Biobank primary-care data used in this study are **not** redistributable
 through this repository. Access is governed by the UK Biobank Access
-Management System (UKB application 142532). Researchers wishing to
+Management System (UKB application 303849). Researchers wishing to
 reproduce the empirical results must apply independently to UK Biobank
 ([https://www.ukbiobank.ac.uk/](https://www.ukbiobank.ac.uk/)). The cohort
 derivation logic is reproduced in full in §4 of the paper and in the CONSORT
@@ -320,12 +320,12 @@ Maintainer: O. R. Olaniran (Department of Medical Statistics, London
 School of Hygiene & Tropical Medicine).
 
 This work was conducted under the **InflAim** programme and used the UK
-Biobank Resource (application 142532). We thank the UK Biobank participants
+Biobank Resource (application 303849). We thank the UK Biobank participants
 and the participating NHS GPs whose data made this work possible.
 
 ## Licence
 
-The R code in this repository is released under the **MIT licence**
+The R code in this repository is released under the **GPL3 licence**
 (see [`LICENSE`](LICENSE)). Paper files in `paper/` follow the OUP
 authoring-template licence; please consult the publisher's terms before
 redistribution.
