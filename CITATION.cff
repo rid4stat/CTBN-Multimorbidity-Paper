@@ -9,8 +9,8 @@ type: software
 version: 1.0.0
 date-released: "2026-05-20"
 license: GPL3
-repository-code: "https://github.com/InflAim/CTBN-Multimorbidity"
-url: "https://github.com/InflAim/CTBN-Multimorbidity"
+repository-code: "https://github.com/InflAim/CTBN-Multimorbidity-Paper"
+url: "https://github.com/InflAim/CTBN-Multimorbidity-Paper"
 authors:
   - given-names: Oyebayo Ridwan
     family-names: Olaniran
