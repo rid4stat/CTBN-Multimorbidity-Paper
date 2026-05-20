@@ -8,9 +8,9 @@ Authors@R: c(
     person(given = "Oyebayo Ridwan",
            family = "Olaniran",
            role = c("aut", "cre"),
-           email = "oyebayo.olaniran@lshtm.ac.uk",
-           comment = c(ORCID = "0000-0000-0000-0000")),
-    person(given = "Sayan Sankar",
+           email = "ridwan.olaniran@lshtm.ac.uk",
+           comment = c(ORCID = "0000-0001-7342-8639")),
+    person(given = "Soumya S.",
            family = "Paria",
            role = "aut"),
     person(given = "Mizanur",
@@ -31,9 +31,9 @@ Description: Implements continuous-time Bayesian networks (CTBNs) with four
     with utilities for posterior inclusion probabilities, conditional and
     synergistic risk estimation, time-dependent AUC, and Brier scores.
     Companion code for Olaniran et al. (2026).
-License: MIT + file LICENSE
-URL: https://github.com/InflAim/CTBN-Multimorbidity
-BugReports: https://github.com/InflAim/CTBN-Multimorbidity/issues
+License: GPL3 + file LICENSE
+URL: https://github.com/InflAim/CTBN-Multimorbidity-Paper
+BugReports: https://github.com/InflAim/CTBN-Multimorbidity-Paper/issues
 Depends:
     R (>= 4.2.0)
 Imports:
