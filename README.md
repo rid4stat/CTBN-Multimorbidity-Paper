@@ -71,23 +71,9 @@ a CTBN in which each component is a continuous-time Markov chain with an
 absorbing onset state. For each target condition *m*, the log onset
 intensity is
 
-```
-log q_m(t,u) = β⁰_m  +  Σ_{ℓ ∈ Pa(m)}   β¹_{m,{ℓ}}   X_ℓ(t⁻)
-                    +  Σ_{L⊆Pa(m), 2 ≤ |L| ≤ P}   β^|L|_{m,L} Π_{ℓ∈L} X_ℓ(t⁻)
-                    +  Z(t)ᵀ γ_m,
-
-$\log q_{m,i,s} = \beta^{0}_m + \sum_{j \in \mathrm{Pa}(m)} \beta^m_{\{j\}} X_{j,i,s} + \sum_{\substack{L \subseteq \mathrm{Pa}(m) \\ 2 \leq |L| \leq P}} \beta^m_L \prod_{j \in L} X_{j,i,s} + \mathbf{Z}_{i,s}^\top \boldsymbol{\gamma}_m$
-
-# Logistic Regression
-
-The sigmoid function is given by:
-
 $$
-\sigma(x) = \frac{1}{1 + e^{-x}}
+\log q_{m,i,s} = \beta^{0}_m + \sum_{j \in \mathrm{Pa}(m)} \beta^m_{\{j\}} X_{j,i,s} + \sum_{\substack{L \subseteq \mathrm{Pa}(m) \\ 2 \leq |L| \leq P}} \beta^m_L \prod_{j \in L} X_{j,i,s} + \mathbf{Z}_{i,s}^\top \boldsymbol{\gamma}_m
 $$
-
-where $x \in \mathbb{R}$.
-```
 
 so that the network coefficients **β** capture main and higher-order
 disease–disease effects, and **γ**<sub>m</sub> captures patient-level
@@ -131,7 +117,7 @@ CTBN-Multimorbidity/
 │       ├── 04_stan_results.R       #   Stan fit + results on UK Biobank (paper)
 │       └── 05_stan_results_alt.R   #   Alternative results script (kept for reference)
 │
-├── paper/                          # Paper artefacts (read-only deliverables)
+├── paper/                          # Paper files (read-only deliverables)
 │   ├── main.tex
 │   ├── supplementary.tex
 │   ├── reference.bib
@@ -340,6 +326,6 @@ and the participating NHS GPs whose data made this work possible.
 ## Licence
 
 The R code in this repository is released under the **MIT licence**
-(see [`LICENSE`](LICENSE)). Paper artefacts in `paper/` follow the OUP
+(see [`LICENSE`](LICENSE)). Paper files in `paper/` follow the OUP
 authoring-template licence; please consult the publisher's terms before
 redistribution.
