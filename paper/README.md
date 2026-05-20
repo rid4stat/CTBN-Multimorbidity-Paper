@@ -1,4 +1,4 @@
-# `paper/` — Manuscript artefacts
+# `paper/` — Manuscript files
 
 This folder contains the LaTeX source of the manuscript plus every figure
 and table that appears in the paper or supplementary material.
