@@ -5,7 +5,7 @@
 [![License: GPL3](https://img.shields.io/badge/License-GPL3-yellow.svg)](https://opensource.org/licenses/GPL3)
 [![R](https://img.shields.io/badge/R-%E2%89%A54.2-blue.svg)](https://www.r-project.org/)
 [![Stan](https://img.shields.io/badge/Stan-%E2%89%A52.32-red.svg)](https://mc-stan.org/)
-[![Paper](https://img.shields.io/badge/Paper-Biometrics--style-green.svg)](paper/main.tex)
+[![Paper](https://img.shields.io/badge/Paper-Biostatistics--style-green.svg)](paper/main.tex)
 
 This repository accompanies the paper:
 
