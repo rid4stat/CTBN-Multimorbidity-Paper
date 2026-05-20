@@ -24,7 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Note: The LaTeX artefacts inside the `paper/` directory (main.tex,
+Note: The LaTeX files inside the `paper/` directory (main.tex,
 supplementary.tex, the OUP authoring template, and figures/tables generated
 for the manuscript) follow the OUP authoring-template licence and are
 provided for review purposes only; they are NOT covered by the MIT licence
